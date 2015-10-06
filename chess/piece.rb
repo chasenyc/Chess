@@ -48,7 +48,7 @@ class Piece
     [-1,  0]
   ]
 
-  attr_reader :color, :type
+  attr_reader :color, :type, :board
   attr_accessor :pos
 
   def initialize(board, type, color, pos)
@@ -60,8 +60,8 @@ class Piece
     #TO do
   end
 
-  def deep_dup
-    new_piece = Piece.new(@board, type, color, pos)
+  def deep_dup(new_board)
+    new_piece = self.class.new(new_board, type, color, pos)
   end
 
   def to_s
@@ -74,8 +74,9 @@ class Piece
 
   def move_into_check?(position)
     duped_board = @board.deep_dup
-    duped_board.move(pos, position)
+    duped_board.move!(pos, position)
     duped_board.in_check?(color)
+
   end
 
   def remove_into_check_moves(moves)
@@ -91,7 +92,7 @@ class SlidingPiece < Piece
     result += valid_moves(STRAIGHT_STEP) if direction.include?(:straight)
     result += valid_moves(DIAGONAL_STEP) if direction.include?(:diagonal)
 
-    remove_into_check_moves(result)
+    result
   end
 
   def valid_moves(move_steps)
@@ -99,14 +100,14 @@ class SlidingPiece < Piece
 
     move_steps.each do |step|
       new_pos = sum_positions(pos,step)
-
       while @board.in_bounds?(new_pos) &&
-           @board[new_pos].nil?
+            @board[new_pos].nil?
         result << new_pos
         new_pos = sum_positions(step, new_pos)
       end
 
       if @board.in_bounds?(new_pos) && !@board[new_pos].nil?
+
         result << new_pos if @board[new_pos].color != self.color
       end
     end
@@ -172,7 +173,7 @@ class Pawn < Piece
   def moves
     steps = []
 
-    if color == :white
+    if color == :black
       # sum_positions([1, 0], pos)
       steps << [1, 0] if @board.in_bounds?(sum_positions([1, 0], pos)) &&
                          @board[sum_positions([1, 0], pos)].nil?
@@ -188,7 +189,7 @@ class Pawn < Piece
         new_pos = sum_positions(pos,strike)
           steps << strike if @board.in_bounds?(sum_positions([1, 0], pos)) &&
                              @board[new_pos].is_a?(Piece) &&
-                             @board[new_pos].color == :black
+                             @board[new_pos].color == :white
       end
     else
 
@@ -204,7 +205,7 @@ class Pawn < Piece
         new_pos = sum_positions(pos,strike)
           steps << strike if @board.in_bounds?(sum_positions([1, 0], pos)) &&
                              @board[new_pos].is_a?(Piece) &&
-                             @board[new_pos].color == :white
+                             @board[new_pos].color == :black
       end
     end
     result = steps.map { |step| sum_positions(step,pos) }

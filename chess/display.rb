@@ -16,10 +16,16 @@ class Display
 
   def render
     system('clear')
-    square_color = :light_white
+    square_color = :light_black
+    letters = ('a'..'h').to_a
+    print "  "
+    letters.each { |letter| print " #{letter} " }
+    print "\n"
     8.times do |row|
+      print "#{8-row} "
       8.times do |col|
         pos = [row, col]
+
         if @board[pos].nil?
           square = "   ".colorize(:background => square_color)
         else
@@ -27,13 +33,13 @@ class Display
         end
 
         if @cursor_pos == pos
-          if !@selected
+           if !@selected
             print square.colorize(:background => :red)
-          elsif @selected
-            print square.colorize(:background => :green)
-          end
+           elsif @selected
+             print square.colorize(:background => :green)
+           end
         else
-          print square
+          print @selected == pos ?  square.colorize(:background => :light_green) : square
         end
 
         square_color == :light_black ? square_color = :light_white : square_color = :light_black
@@ -41,23 +47,21 @@ class Display
       print "\n"
       square_color == :light_black ? square_color = :light_white : square_color = :light_black
     end
+
+    p "Current Player is #{@board.current_player}"
     nil
   end
 
   def play(start_pos = nil)
     render
-    #game_over if @board.checkmate?
-    #@board.in_check?
-    puts "START POS: #{start_pos}"
-
+    game_over if @board.checkmate?
     while get_input.nil?
       @board[@cursor_pos]
       render
-      puts "START POS: #{start_pos}"
     end
 
-    if !@selected && @board[@cursor_pos].is_a?(Piece)
-      @selected = true
+    if !@selected && @board[@cursor_pos].is_a?(Piece) && @board[@cursor_pos].color == @board.current_player
+      @selected = @cursor_pos
       play(@cursor_pos)
     elsif @selected
 
@@ -77,6 +81,14 @@ class Display
 
   end
 
+  def game_over
+    puts "LOSER"
+    abort
+  end
+
+  def in_check
+    puts "YOU ARE IN CHECK"
+  end
 
 end
 
