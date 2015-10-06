@@ -42,34 +42,34 @@ class Board
 
     def generate_pieces
       #WHITE
-      self[[0,0]] = Piece.new(self, :rook  , :white, [0,0])
-      self[[0,7]] = Piece.new(self, :rook  , :white, [0,7])
-      self[[0,1]] = Piece.new(self, :knight, :white, [0,1])
-      self[[0,6]] = Piece.new(self, :knight, :white, [0,6])
-      self[[0,2]] = Piece.new(self, :bishop, :white, [0,2])
-      self[[0,5]] = Piece.new(self, :bishop, :white, [0,5])
-      self[[0,3]] = Piece.new(self, :king  , :white, [0,3])
-      self[[0,4]] = Piece.new(self, :queen , :white, [0,4])
+      self[[0,0]] = Rook.new(  self, :rook  , :white, [0,0])
+      self[[0,7]] = Rook.new(  self, :rook  , :white, [0,7])
+      self[[0,1]] = Knight.new(self, :knight, :white, [0,1])
+      self[[0,6]] = Knight.new(self, :knight, :white, [0,6])
+      self[[0,2]] = Bishop.new(self, :bishop, :white, [0,2])
+      self[[0,5]] = Bishop.new(self, :bishop, :white, [0,5])
+      self[[0,3]] = King.new(  self, :king  , :white, [0,3])
+      self[[0,4]] = Queen.new( self, :queen , :white, [0,4])
       #PAWNS
       8.times do |i|
         pos = [1,i]
-        self[pos] = Piece.new(self, :pawn, :white, pos)
+        self[pos] = Pawn.new(  self, :pawn  , :white, pos)
       end
 
 
       #BLACK
-      self[[7,0]] = Piece.new(self, :rook  , :black, [7,0])
-      self[[7,7]] = Piece.new(self, :rook  , :black, [7,7])
-      self[[7,1]] = Piece.new(self, :knight, :black, [7,1])
-      self[[7,6]] = Piece.new(self, :knight, :black, [7,6])
-      self[[7,2]] = Piece.new(self, :bishop, :black, [7,2])
-      self[[7,5]] = Piece.new(self, :bishop, :black, [7,5])
-      self[[7,3]] = Piece.new(self, :king  , :black, [7,3])
-      self[[7,4]] = Piece.new(self, :queen , :black, [7,4])
+      self[[7,0]] = Rook.new(  self, :rook  , :black, [7,0])
+      self[[7,7]] = Rook.new(  self, :rook  , :black, [7,7])
+      self[[7,1]] = Knight.new(self, :knight, :black, [7,1])
+      self[[7,6]] = Knight.new(self, :knight, :black, [7,6])
+      self[[7,2]] = Bishop.new(self, :bishop, :black, [7,2])
+      self[[7,5]] = Bishop.new(self, :bishop, :black, [7,5])
+      self[[7,3]] = King.new(  self, :king  , :black, [7,3])
+      self[[7,4]] = Queen.new( self, :queen , :black, [7,4])
       #PAWNS
       8.times do |i|
         pos = [6,i]
-        self[pos] = Piece.new(self, :pawn, :black, pos)
+        self[pos] = Pawn.new(  self, :pawn  , :black, pos)
       end
     end
 

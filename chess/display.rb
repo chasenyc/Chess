@@ -6,7 +6,7 @@ require_relative 'cursorable'
 class Display
   include Cursorable
 
-  attr_reader :board, :cursor_pos
+  attr_reader :board, :cursor_pos, :selected
 
   def initialize(board)
     @board = board
@@ -16,7 +16,7 @@ class Display
 
   def render
     system('clear')
-    square_color = :light_black
+    square_color = :light_white
     8.times do |row|
       8.times do |col|
         pos = [row, col]
@@ -46,14 +46,18 @@ class Display
       @board[@cursor_pos]
       render
     end
-    unless @selected
+    if !@selected && @board[@cursor_pos].is_a?(Piece)
       @selected = true
       play(@cursor_pos)
-    else
-      @board.move(start_pos, @cursor_pos)
-      @selected = false
-      play
+    elsif @selected
+      if @board[start_pos].moves.include?(@cursor_pos)
+        @board.move(start_pos, @cursor_pos)
+        @selected = false
+      end
     end
+
+    @selected = false
+    play
   end
 
   def inspect
