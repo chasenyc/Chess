@@ -48,7 +48,7 @@ class Piece
     [-1,  0]
   ]
 
-  attr_reader :color
+  attr_reader :color, :type
   attr_accessor :pos
 
   def initialize(board, type, color, pos)
@@ -126,7 +126,7 @@ class SteppingPiece < Piece
     result = []
     result += valid_moves(KNIGHT_STEP) if step_type == :knight
     result += valid_moves(KING_STEP)   if step_type == :king
-
+    result
   end
 
   def valid_moves(move_steps)
@@ -172,8 +172,7 @@ class Pawn < Piece
         new_pos = sum_positions(pos,strike)
           steps << strike if @board.in_bounds?(sum_positions([1, 0], pos)) &&
                              @board[new_pos].is_a?(Piece) &&
-                             @board[new_pos].color == :black &&
-                             @board.in_bounds?(sum_positions([1, 0], pos))
+                             @board[new_pos].color == :black
       end
     else
 
@@ -189,7 +188,7 @@ class Pawn < Piece
         new_pos = sum_positions(pos,strike)
           steps << strike if @board.in_bounds?(sum_positions([1, 0], pos)) &&
                              @board[new_pos].is_a?(Piece) &&
-                             @board[new_pos].color == :black
+                             @board[new_pos].color == :white
       end
     end
 

@@ -1,4 +1,5 @@
 require_relative 'piece.rb'
+require 'byebug'
 
 class ChessError < StandardError
 end
@@ -34,9 +35,48 @@ class Board
     self[end_pos].pos = end_pos
   end
 
-    def in_bounds?(pos)
-      pos[0].between?(0, 7) && pos[1].between?(0, 7)
+  def in_bounds?(pos)
+    pos[0].between?(0, 7) && pos[1].between?(0, 7)
+  end
+
+  def in_check?(color)
+    king_pos = find_piece_positions(:king, color).first
+    opp_positions = opponent_positions(color)
+    opp_positions.any? do |position|
+      self[position].moves.include?(king_pos)
     end
+  end
+
+  def checkmate?
+
+  end
+
+  def flip(color)
+    color == :white ? :black : :white
+  end
+
+  def all_pieces
+    [:rook, :knight, :bishop, :king, :queen, :pawn]
+  end
+
+  def opponent_positions(color)
+    result = []
+    all_pieces.each do |piece|
+      result.concat(find_piece_positions(piece, flip(color)))
+    end
+    result
+  end
+
+
+  def find_piece_positions(type, color)
+      pieces.select do |piece|
+        piece.type == type && piece.color == color
+      end.map { |piece| piece.pos }
+  end
+
+  def pieces
+    grid.flatten.compact
+  end
 
   private
 

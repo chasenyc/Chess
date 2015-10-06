@@ -54,7 +54,7 @@ class Display
       puts "START POS: #{start_pos}"
     end
 
-    if !@selected && @board[@cursor_pos].is_a?(Piece)
+    if !@selected && @board[@cursor_pos].is_a?(Piece) 
       @selected = true
       play(@cursor_pos)
     elsif @selected
