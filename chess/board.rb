@@ -6,14 +6,20 @@ end
 
 class Board
   attr_reader :grid
+  attr_accessor :current_player
 
-  def initialize
+  def initialize()
     populate_board
+    @current_player = :white
   end
 
   def populate_board
     @grid = Array.new(8) { Array.new(8) }
     generate_pieces
+  end
+
+  def flip_player!
+    current_player = flip_color(current_player)
   end
 
   def [](pos)
@@ -41,17 +47,17 @@ class Board
 
   def in_check?(color)
     king_pos = find_piece_positions(:king, color).first
-    opp_positions = opponent_positions(color)
+    opp_positions = player_positions(flip_color(color))
     opp_positions.any? do |position|
       self[position].moves.include?(king_pos)
     end
   end
 
   def checkmate?
-
+    in_check?(current_player) && no_valid_moves?(current_player)
   end
 
-  def flip(color)
+  def flip_color(color)
     color == :white ? :black : :white
   end
 
@@ -59,12 +65,22 @@ class Board
     [:rook, :knight, :bishop, :king, :queen, :pawn]
   end
 
-  def opponent_positions(color)
+  def player_positions(color)
     result = []
     all_pieces.each do |piece|
-      result.concat(find_piece_positions(piece, flip(color)))
+      result.concat(find_piece_positions(piece, color))
     end
     result
+  end
+
+  def no_valid_moves?(color)
+    result = []
+    player_positions(color).each do |pos|
+      p pos
+      result.concat(self[pos].moves)
+    end
+
+    result.empty?
   end
 
 
@@ -76,6 +92,16 @@ class Board
 
   def pieces
     grid.flatten.compact
+  end
+
+  def deep_dup
+    new_board = Board.new
+    grid.each_index do |row_idx|
+      grid[row_idx].each_with_index do |piece, col_idx|
+        new_board[[row_idx,col_idx]] = piece.deep_dup unless piece.nil?
+      end
+    end
+    new_board
   end
 
   private

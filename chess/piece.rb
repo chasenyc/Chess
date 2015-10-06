@@ -60,12 +60,28 @@ class Piece
     #TO do
   end
 
+  def deep_dup
+    new_piece = Piece.new(@board, type, color, pos)
+  end
+
   def to_s
     " #{DISPLAY_HASH[@type]}".colorize(@color)
   end
 
   def sum_positions(pos, new_pos)
     [(pos[0]+new_pos[0]), (pos[1]+new_pos[1])]
+  end
+
+  def move_into_check?(position)
+    duped_board = @board.deep_dup
+    duped_board.move(pos, position)
+    duped_board.in_check?(color)
+  end
+
+  def remove_into_check_moves(moves)
+    moves.each do |move|
+      moves.delete(move) if move_into_check?(move)
+    end
   end
 end
 
@@ -75,7 +91,7 @@ class SlidingPiece < Piece
     result += valid_moves(STRAIGHT_STEP) if direction.include?(:straight)
     result += valid_moves(DIAGONAL_STEP) if direction.include?(:diagonal)
 
-    result
+    remove_into_check_moves(result)
   end
 
   def valid_moves(move_steps)
@@ -191,7 +207,7 @@ class Pawn < Piece
                              @board[new_pos].color == :white
       end
     end
-
-    steps.map { |step| sum_positions(step,pos) }
+    result = steps.map { |step| sum_positions(step,pos) }
+    result
   end
 end

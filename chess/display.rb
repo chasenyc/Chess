@@ -46,6 +46,8 @@ class Display
 
   def play(start_pos = nil)
     render
+    #game_over if @board.checkmate?
+    #@board.in_check?
     puts "START POS: #{start_pos}"
 
     while get_input.nil?
@@ -54,13 +56,14 @@ class Display
       puts "START POS: #{start_pos}"
     end
 
-    if !@selected && @board[@cursor_pos].is_a?(Piece) 
+    if !@selected && @board[@cursor_pos].is_a?(Piece)
       @selected = true
       play(@cursor_pos)
     elsif @selected
 
       if @board[start_pos].moves.include?(@cursor_pos)
         @board.move(start_pos, @cursor_pos)
+        @board.flip_player!
         @selected = false
       end
 
@@ -76,3 +79,11 @@ class Display
 
 
 end
+
+
+# if __FILENAME__ = $PROGRAM_NAME
+#
+#   b = Board.new
+#   d = Display.new(b)
+#
+# end
