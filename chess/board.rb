@@ -36,6 +36,9 @@ class Board
     #Check if pieces are there
     raise ChessError.new("No piece at start position") if self[start_pos].nil?
     raise ChessError.new("Not valid move") unless self[start_pos].move_valid?(end_pos)
+
+    raise ChessError.new("You are in check with this move") if self[start_pos].move_into_check?(end_pos)
+
     self[end_pos] = self[start_pos]
     self[start_pos] = nil
     self[end_pos].pos = end_pos

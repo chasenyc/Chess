@@ -16,7 +16,7 @@ class Display
 
   def render
     system('clear')
-    square_color = :light_black
+    square_color = :light_white
     letters = ('a'..'h').to_a
     print "  "
     letters.each { |letter| print " #{letter} " }
@@ -66,9 +66,14 @@ class Display
     elsif @selected
 
       if @board[start_pos].moves.include?(@cursor_pos)
-        @board.move(start_pos, @cursor_pos)
-        @board.flip_player!
-        @selected = false
+         if @board[start_pos].move_into_check?(@cursor_pos)
+           @selected = false
+           play
+         else
+           @board.move(start_pos, @cursor_pos)
+           @board.flip_player!
+           @selected = false
+         end
       end
 
     end
