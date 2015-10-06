@@ -1,4 +1,5 @@
 require 'colorize'
+require 'byebug'
 
 class Piece
 
@@ -89,9 +90,7 @@ class SlidingPiece < Piece
         new_pos = sum_positions(step, new_pos)
       end
 
-      if @board[new_pos].nil?
-      else
-
+      if @board.in_bounds?(new_pos) && !@board[new_pos].nil?
         result << new_pos if @board[new_pos].color != self.color
       end
     end
@@ -158,29 +157,38 @@ class Pawn < Piece
     steps = []
 
     if color == :white
+      # sum_positions([1, 0], pos)
+      steps << [1, 0] if @board.in_bounds?(sum_positions([1, 0], pos)) &&
+                         @board[sum_positions([1, 0], pos)].nil?
 
-      steps << [1, 0] if @board[sum_positions([1, 0], pos)].nil?
 
-      steps << [2, 0] if pos[0] == 1 && !steps.empty? &&
-                      @board[sum_positions([2, 0], pos)].nil?
+      steps << [2, 0] if @board.in_bounds?(sum_positions([1, 0], pos)) &&
+                         pos[0] == 1 && !steps.empty? &&
+                         @board[sum_positions([2, 0], pos)].nil?
+
 
       white_pawn_strike = [[1,-1],[1,1]]
       white_pawn_strike.each do |strike|
         new_pos = sum_positions(pos,strike)
-          steps << strike if @board[new_pos].is_a?(Piece) &&
-                             @board[new_pos].color == :black
+          steps << strike if @board.in_bounds?(sum_positions([1, 0], pos)) &&
+                             @board[new_pos].is_a?(Piece) &&
+                             @board[new_pos].color == :black &&
+                             @board.in_bounds?(sum_positions([1, 0], pos))
       end
     else
 
-      steps << [-1, 0] if @board[sum_positions([-1, 0], pos)].nil?
+      steps << [-1, 0] if @board.in_bounds?(sum_positions([1, 0], pos)) &&
+                          @board[sum_positions([-1, 0], pos)].nil?
 
-      steps << [-2, 0] if pos[0] == 6 && !steps.empty? &&
-                      @board[sum_positions([-2, 0], pos)].nil?
+      steps << [-2, 0] if @board.in_bounds?(sum_positions([1, 0], pos)) &&
+                          pos[0] == 6 && !steps.empty? &&
+                          @board[sum_positions([-2, 0], pos)].nil?
 
       black_pawn_strike = [[-1,-1],[-1,1]]
       black_pawn_strike.each do |strike|
         new_pos = sum_positions(pos,strike)
-          steps << strike if @board[new_pos].is_a?(Piece) &&
+          steps << strike if @board.in_bounds?(sum_positions([1, 0], pos)) &&
+                             @board[new_pos].is_a?(Piece) &&
                              @board[new_pos].color == :black
       end
     end

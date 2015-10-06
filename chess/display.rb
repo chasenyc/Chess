@@ -27,7 +27,11 @@ class Display
         end
 
         if @cursor_pos == pos
-          print square.colorize(:background => :red)
+          if !@selected
+            print square.colorize(:background => :red)
+          elsif @selected
+            print square.colorize(:background => :green)
+          end
         else
           print square
         end
@@ -42,22 +46,28 @@ class Display
 
   def play(start_pos = nil)
     render
+    puts "START POS: #{start_pos}"
+
     while get_input.nil?
       @board[@cursor_pos]
       render
+      puts "START POS: #{start_pos}"
     end
+
     if !@selected && @board[@cursor_pos].is_a?(Piece)
       @selected = true
       play(@cursor_pos)
     elsif @selected
+
       if @board[start_pos].moves.include?(@cursor_pos)
         @board.move(start_pos, @cursor_pos)
         @selected = false
       end
+
     end
 
     @selected = false
-    play
+    play(start_pos)
   end
 
   def inspect
